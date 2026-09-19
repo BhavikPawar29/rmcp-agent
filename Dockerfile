@@ -7,5 +7,5 @@ RUN cargo build --release
 FROM debian:bookworm-slim
 WORKDIR /app
 COPY --from=builder /app/target/release/rmcp-agent /usr/local/bin/bhavik-rmcp
-RUN touch /app/productiion-crash.log
+RUN touch /app/production-crash.log
 CMD ["bhavik-rmcp"]
