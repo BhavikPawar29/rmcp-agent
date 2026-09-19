@@ -23,6 +23,7 @@ use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 use regex::Regex;
 
+use sift_types::Event;
 
 
 fn read_log () -> io::Result<()>{
@@ -33,32 +34,28 @@ fn read_log () -> io::Result<()>{
  
     for line in reader.lines() {
         let line = line?;
-        parse_log(&line);
+        let event = parse_log(&line);
+
+        if let Some(event)  = event {
+            print!("{}", event.body);
+        }
     }
 
     Ok(())
 }
 
-fn parse_log(line: &str) -> io::Result<()> {
+fn parse_log(line: &str) -> Option<Event> {
 
     let log_regx = Regex::new(r"^(?P<time>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) (?P<level>[A-Z]+) \[(?P<source>[^\]]+)\] (?P<msg>.*)$"
     ).unwrap();
 
-    for line in line.lines() {
-
-        if let Some(caps) = log_regx.captures(&line) {
-            let timestamp = &caps["time"];
-            let level = &caps["level"];
-            let source = &caps["source"];
-            let message = &caps["msg"];
-
-            println!("Time: {}", timestamp);
-            println!("Level: {}", level);
-            println!("Source: {}", source);
-            println!("Message: {}", message);
-        }
-    }
-
-    Ok(())
-
+    let caps = log_regx.captures(&line)?;
+    
+    Some (Event{ 
+        timestamp: caps["time"].to_string(),
+        source_id: caps["source"].to_string(),
+        severity: Some(caps["level"].to_string()),
+        body: caps["msg"].to_string(),
+    })
+    
 }
