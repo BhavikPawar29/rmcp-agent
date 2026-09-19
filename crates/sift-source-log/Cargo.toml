@@ -1,5 +1,5 @@
 [package]
-name = "rmcp-agent"
+name = "sift-source-log"
 version = "0.1.0"
 edition = "2024"
 
@@ -7,12 +7,5 @@ edition = "2024"
 tokio = { version = "1", features = ["full"]}
 serde = { version = "1", features = ["derive"]}
 serde_json = "1.0"
-
-[workspace]
-members = [
-    "crates/sift-types",
-    "crates/sift-source-log",
-    "crates/sift-mcp",
-]
-
-resolver = "3"
+[dependencies]
+regex = "1"
